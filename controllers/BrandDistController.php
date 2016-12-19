@@ -84,13 +84,10 @@ class BrandDistController extends Controller
             usort($models, array("BrandSaleTemp", "cmp"));
             return array_slice($models,0,12);
         case 'market_shares':
+
+
             echo 'market_shares';
             break;
       }
-
-      //return ['code'=>false,'message'=>$type];
-
-
-
   }
 }
