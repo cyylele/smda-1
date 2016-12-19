@@ -1,8 +1,9 @@
 <?php
-class BrandSaleTemp
+class BrandSalePercTemp
 {
   var $brand;
   var $sale_amount;
+  var $percentage;
   var $temperature;
 
   function setBrand ($brand) {
@@ -10,6 +11,9 @@ class BrandSaleTemp
   }
   function setSaleAmount ($saleAmount) {
       $this->sale_amount = $saleAmount;
+  }
+  function setPercentage ($percentage) {
+      $this->percentage = $percentage;
   }
   function setTemperature ($temperature) {
       $this->temperature = $temperature;
