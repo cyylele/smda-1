@@ -1,6 +1,8 @@
 <?php
 class DateUtils
 {
+    static $months = array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
+
     static function convertMonthToNum($month)
     {
       switch($month){
