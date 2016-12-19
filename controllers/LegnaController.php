@@ -8,7 +8,7 @@ use yii\web\Response;
 
 class LegnaController extends Controller
 {
-    public function actionSit($msg = 'Hello')
+    public function actionSit($msg = 'Hello2')
     {
         Yii::$app->response->format=Response::FORMAT_JSON;
 
