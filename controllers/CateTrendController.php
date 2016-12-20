@@ -9,32 +9,33 @@ use yii\web\Response;
 require dirname(dirname(__FILE__)).'/include/phpexcel/PHPExcel.php';
 //引入model
 include('model/CateDateProp.php');
+include('model/CateDate.php');
 //引入utils
 include_once('utils/DateUtils.php');
 include_once('utils/FileUtils.php');
 
 class CateTrendController extends Controller
 {
-  public function actionDo($type='', $year=2012, $month=0)
+  public function actionDo($type='', $year=2012)
   {
-      function readCateProp($year, $month)
+      function readCateData($year)
       {
           $currentSheet = \FileUtils::getExcelSheet('data/history.xlsx', 3);
           $allRow = $currentSheet->getHighestRow();//取得最大的行号
           for($currentRow = 2 ;$currentRow <= $allRow; $currentRow++)
           {
-              $currentColumn = ($year - 2012) * 12 + $month + 1;
-              $model = new \CateDateProp();
-              $val = $currentSheet->getCellByColumnAndRow(0,$currentRow)->getValue();
-              $model->setCategory($val);
-
-              $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();
-              $model->setCategoryProportion($val);
-
-              $months = \DateUtils::$months;
-              $model->setDate($months[$month-1] ." ". $year);
-
-              $models[($currentRow-2)*9 + $month -1] = $model;
+              $model = new \CateData();
+              $model->setName($currentSheet->getCellByColumnAndRow(0,$currentRow)->getValue());
+              $currentColumn = ($year - 2012) * 12 + 1;
+              $datas = array();
+              for($count = 0; $count<12; $count++)
+              {
+                  $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();
+                  $datas[$count] = $val;
+                  $currentColumn++;
+              }
+              $model->setData($datas);
+              $models[($currentRow-2)] = $model;
           }
           return $models;
       }
@@ -74,7 +75,7 @@ class CateTrendController extends Controller
       switch($type){
         case 'category_proportion':
             // return readCateProp($year, $month);
-            echo $jsoncallback . "(" . json_encode(readCateProp($year, $month)) . ")";
+            echo $jsoncallback . "(" . json_encode(readCateData($year)) . ")";
             break;
         case 'detailed_cate_Proportion':
             //return readDetailedCateProportion($year);
