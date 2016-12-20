@@ -119,13 +119,19 @@ class BrandDistController extends Controller
         return $models;
       }
 
-      Yii::$app->response->format=Response::FORMAT_JSON;
+      //Yii::$app->response->format=Response::FORMAT_JSON;
+      header("Access-Control-Allow-Origin: *");//同源策略 跨域请求 头设置
+      header('content-type:text/html;charset=utf8 ');
+      //获取回调函数名
+      $jsoncallback = htmlspecialchars($_REQUEST['callback']);//把预定义的字符转换为 HTML 实体。
 
       switch($type){
         case 'sale_amount':
             $models = readBrandSalePercTemp($year,$month);
             usort($models, array("BrandSalePercTemp", "cmp"));
-            return array_slice($models,0,12);
+            //return array_slice($models,0,12);
+            echo $jsoncallback . "(" . json_encode(array_slice($models,0,12)) . ")";
+            break;
         case 'market_shares':
             $models = array();
             $months = array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
@@ -135,7 +141,9 @@ class BrandDistController extends Controller
                 $models = array_merge($models, $subModels);
             }
             usort($models, array("SymbolDateAmount", "cmp"));
-            return $models;
+            //return $models;
+            echo $jsoncallback . "(" . json_encode($models) . ")";
+            break;
       }
   }
 }
