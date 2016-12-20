@@ -31,7 +31,7 @@ class CateTrendController extends Controller
               $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();
               $model->setCategoryProportion($val);
 
-              $months = array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
+              $months = \DateUtils::$months;
               $model->setDate($months[$month-1] ." ". $year);
 
               $models[($currentRow-2)*9 + $month -1] = $model;
