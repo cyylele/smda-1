@@ -10,6 +10,9 @@ require dirname(dirname(__FILE__)).'/include/phpexcel/PHPExcel.php';
 //引入model
 include('model/BrandSalePercTemp.php');
 include('model/SymbolDateAmount.php');
+//引入utils
+include_once('utils/DateUtils.php');
+include_once('utils/FileUtils.php');
 
 class BrandDistController extends Controller
 {
@@ -21,38 +24,23 @@ class BrandDistController extends Controller
 
         //根据年月计算是第几大列
         $no = ($year - 2012) * 12 + ($month - 3) + 1;
-
-        $file = 'data/history.xlsx';
-        $objPHPExcel = new \PHPExcel();
-        $PHPReader = new \PHPExcel_Reader_Excel2007();
-        if(!$PHPReader->canRead($file))
-        {
-            $PHPReader = new PHPExcel_Reader_Excel5();
-            if(!$PHPReader->canRead($file))
-            {
-                echo 'Excel not found';
-                return ;
-            }
-        }
-        $PHPExcel = $PHPReader->load($file);
-        $currentSheet = $PHPExcel->getSheet(5);
-        //取得最大的行号
-        $allRow = $currentSheet->getHighestRow();
+        $currentSheet = \FileUtils::getExcelSheet('data/history.xlsx', 5);
+        $allRow = $currentSheet->getHighestRow();//取得最大行号
         for($currentRow = 3 ;$currentRow <= $allRow; $currentRow++)
         {
             $model = new \BrandSalePercTemp();
             $model->setTemperature($temp);
 
             $currentColumn = ($no-1) * 3;
-            $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();
+            $val = $currentSheet->getCellByColumnAndRow($currentColumn, $currentRow)->getValue();
             $model->setBrand($val);
 
             $currentColumn++;
-            $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();
+            $val = $currentSheet->getCellByColumnAndRow($currentColumn, $currentRow)->getValue();
             $model->setSaleAmount($val);
 
             $currentColumn++;
-            $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();
+            $val = $currentSheet->getCellByColumnAndRow($currentColumn, $currentRow)->getValue();
             $model->setPercentage($val);
 
             $models[$currentRow-3] = $model;
@@ -82,25 +70,9 @@ class BrandDistController extends Controller
       function readSymbolDateAmount($year, $month, $str){
         //根据年月计算是第几大列
         $no = ($year - 2012) * 12 + ($month - 3) + 1;
-
-        $file = 'data/history.xlsx';
-        $objPHPExcel = new \PHPExcel();
-        $PHPReader = new \PHPExcel_Reader_Excel2007();
-        if(!$PHPReader->canRead($file))
-        {
-            $PHPReader = new PHPExcel_Reader_Excel5();
-            if(!$PHPReader->canRead($file))
-            {
-                echo 'Excel not found';
-                return ;
-            }
-        }
-        $PHPExcel = $PHPReader->load($file);
-        $currentSheet = $PHPExcel->getSheet(5);
-        //取得最大的列号
-        $allColumn = $currentSheet->getHighestColumn();
-        //取得最大的行号
-        $allRow = $currentSheet->getHighestRow();
+        $currentSheet = \FileUtils::getExcelSheet('data/history.xlsx', 5);
+        $allColumn = $currentSheet->getHighestColumn();//取得最大的列号
+        $allRow = $currentSheet->getHighestRow();//取得最大的行号
         for($currentRow = 3 ;$currentRow <= $allRow; $currentRow++)
         {
               $model = new \SymbolDateAmount();
@@ -134,7 +106,7 @@ class BrandDistController extends Controller
             break;
         case 'market_shares':
             $models = array();
-            $months = array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
+            $months = \DateUtils::$months;
             for($curMonth = 1; $curMonth <= 12; $curMonth++)
             {
                 $subModels = readSymbolDateAmount($year, $month, $months[$curMonth-1] . " " . $year);

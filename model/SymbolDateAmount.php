@@ -1,5 +1,5 @@
 <?php
-include('utils/DateUtils.php');
+include_once('utils/DateUtils.php');
 
 class SymbolDateAmount
 {
