@@ -30,7 +30,7 @@ class CateDistController extends Controller
         $PHPExcel = $PHPReader->load($file);
         $currentSheet = $PHPExcel->getSheet(4);
 
-        $currentColumn = ($year - 2012) * 12 + 1;
+        $currentColumn = ($year - 2012) * 12 * 3 + 1;
         for($month = 1; $month <=12; $month++)
         {
             $datas[$month -1] = $currentSheet->getCellByColumnAndRow($currentColumn,$category+2)->getValue();;
