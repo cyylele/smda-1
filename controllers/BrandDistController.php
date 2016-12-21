@@ -55,17 +55,16 @@ class BrandDistController extends Controller
         return $val;
       }
 
-      function readSymbolDateAmount($year, $month, $str){
+      function readSymbolDateAmount($year, $month, $str)
+      {
         //根据年月计算是第几大列
-        $no = ($year - 2012) * 12 + ($month - 3) + 1;
+        $no = ($year - 2012) * 12 + ($month) - 3;
         $currentSheet = \FileUtils::getExcelSheet('data/history.xlsx', 5);
-        $allColumn = $currentSheet->getHighestColumn();//取得最大的列号
         $allRow = $currentSheet->getHighestRow();//取得最大的行号
         for($currentRow = 3 ;$currentRow <= $allRow; $currentRow++)
         {
+              $currentColumn = $no * 3;
               $model = new \SymbolDateAmount();
-
-              $currentColumn = ($no-1) * 3;
               $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();
               $model->setSymbol($val);
 
@@ -77,6 +76,37 @@ class BrandDistController extends Controller
               $models[$currentRow-3] = $model;
         }
         return $models;
+      }
+
+      function getHighestModels($models)
+      {
+        $count = count($models);
+        for($index = 0; $index < $count; $index++)
+        {
+          $model = $models[$index];
+          @$allAmounts[$model->symbol] += $model->amount;
+        }
+        arsort($allAmounts);
+        $index = 0;
+        foreach($allAmounts as $x=>$x_value)
+        {
+            $allSymbols[$index++] = $x;
+        }
+        $top4Symbols = array_slice($allSymbols,0,4);
+        // var_dump($top4Symbols);
+
+        $newModels = array();
+        $index = 0;
+        foreach($models as $x=>$x_value)
+        {
+          // echo $x_value->symbol;
+          if(in_array($x_value->symbol, $top4Symbols))
+          {
+            $newModels[$index++] = $x_value;
+          }
+
+        }
+        return $newModels;
       }
 
       //Yii::$app->response->format=Response::FORMAT_JSON;
@@ -95,12 +125,32 @@ class BrandDistController extends Controller
         case 'market_shares':
             $models = array();
             $months = \DateUtils::$months;
-            for($curMonth = 1; $curMonth <= 12; $curMonth++)
+            if($year == 2012)
             {
-                $subModels = readSymbolDateAmount($year, $month, $months[$curMonth-1] . " " . $year);
-                $models = array_merge($models, $subModels);
+                for($curMonth = 3; $curMonth <= 12; $curMonth++)
+                {
+                    $subModels = readSymbolDateAmount($year, $curMonth, $months[$curMonth-1] . " " . $year);
+                    $models = array_merge($models, $subModels);
+                }
+            }
+            else if($year == 2016)
+            {
+                for($curMonth = 1; $curMonth <= 11; $curMonth++)
+                {
+                    $subModels = readSymbolDateAmount($year, $curMonth, $months[$curMonth-1] . " " . $year);
+                    $models = array_merge($models, $subModels);
+                }
+            }
+            else
+            {
+                for($curMonth = 1; $curMonth <= 12; $curMonth++)
+                {
+                    $subModels = readSymbolDateAmount($year, $curMonth, $months[$curMonth-1] . " " . $year);
+                    $models = array_merge($models, $subModels);
+                }
             }
             usort($models, array("SymbolDateAmount", "cmp"));
+            $models = getHighestModels($models);
             //return $models;
             echo $jsoncallback . "(" . json_encode($models) . ")";
             break;

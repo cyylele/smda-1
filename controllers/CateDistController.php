@@ -21,7 +21,7 @@ class CateDistController extends Controller
           $currentColumn = ($year - 2012) * 12 * 3 + 1;
           for($month = 1; $month <=12; $month++)
           {
-              $datas[$month -1] = $currentSheet->getCellByColumnAndRow($currentColumn,$category+2)->getValue();;
+              $datas[$month -1] = $currentSheet->getCellByColumnAndRow($currentColumn,$category+2)->getValue();
               $currentColumn+=3;
           }
           return $datas;
@@ -45,7 +45,7 @@ class CateDistController extends Controller
           {
               $currentColumn = ($year - 2012) * 12 * 3  + ($month-1) * 3 + 1;
               $model = new \CateSalePerc();
-              $model->setSaleAmount($currentSheet->getCellByColumnAndRow($currentColumn++,$currentRow)->getValue());
+              $model->setSaleAmount($currentSheet->getCellByColumnAndRow($currentColumn++,$currentRow)->getValue()/10000000);
               $model->setPercentage($currentSheet->getCellByColumnAndRow($currentColumn++,$currentRow)->getValue());
               $model->setCategory($currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue());
               $models[$currentRow - 3] = $model;
