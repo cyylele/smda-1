@@ -83,7 +83,7 @@ class CateDistController extends Controller
             $model->setType("line");
             $model->setName("平均气温");
             $model->setYAxisIndex(1);
-            $models[10] = $model;
+            $models[9] = $model;
             echo $jsoncallback . "(" . json_encode($models) . ")";
             break;
         case 'temperature':
