@@ -19,7 +19,7 @@ include_once('utils/CateUtils.php');
 include_once('utils/FileUtils.php');
 class CateRankController extends Controller
 {
-    public function actionDo($type='')
+    public function actionDo($type='',$city='上海')
     {
 
         function getalphnum($char){
@@ -32,18 +32,18 @@ class CateRankController extends Controller
             }
             return $sum;
         }
-        $currentSheet = \FileUtils::getExcelSheet('data/future.xlsx', 0);
-        $lastColumn = $currentSheet->getHighestColumn();//取得最大的行号
-        $currentRow = 2;
+        $currentSheet = \FileUtils::getExcelSheet('data/future.xlsx', 2);
+        $currentRow=\CateUtils::convertCityToNum($city);
+        $lastColumn = $currentSheet->getHighestColumn();//取得最大的列
         $models=array();
         $allcolumn= getalphnum( $lastColumn);
-
+        echo $currentRow;
         for($currentColumn = 0 ;$currentColumn < $allcolumn; $currentColumn++)
         {
             //echo "test";
             $model = new \CateRank();
-            $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();
             $val1 = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow-1)->getValue();
+            $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();
             $model->setCategory($val1);
             $model->sale_amount($val);
             $models[$currentColumn] = $model;
