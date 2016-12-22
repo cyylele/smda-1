@@ -7,8 +7,6 @@
  */
 class CateUtils
 {
-    //static $cates = array(1,2,3,4,5,6,7,8,9);
-
     static function convertCateToNum($cate)
     {
         switch($cate){
@@ -21,7 +19,6 @@ class CateUtils
             case  7:     return '驱虫用品';
             case  8:     return '衣物清洁剂/护理剂';
             case  9:     return '室内除臭/芳香用品';
-
         }
     }
     static function convertCityToNum($city){

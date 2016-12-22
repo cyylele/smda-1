@@ -9,6 +9,7 @@ use yii\web\Response;
 require dirname(dirname(__FILE__)).'/include/phpexcel/PHPExcel.php';
 //引入model
 include('model/CateSalePerc.php');
+include('model/NameTypeData.php');
 //引入utils
 include_once('utils/FileUtils.php');
 
@@ -53,6 +54,12 @@ class CateDistController extends Controller
           return $models;
       }
 
+      function readCateName($category)
+      {
+        $currentSheet = \FileUtils::getExcelSheet('data/history.xlsx', 4);
+        return $currentSheet->getCellByColumnAndRow(0,$category + 2)->getValue();
+      }
+
       // Yii::$app->response->format=Response::FORMAT_JSON;
       header("Access-Control-Allow-Origin: *");//同源策略 跨域请求 头设置
       header('content-type:text/html;charset=utf8 ');
@@ -62,7 +69,22 @@ class CateDistController extends Controller
       switch($type){
         case 'cate_sales':
             //return read12Sales($year, $category);
-            echo $jsoncallback . "(" . json_encode(read12Sales($year, $category)) . ")";
+            $models = array();
+            for($category=1; $category <= 9; $category++)
+            {
+              $model = new \NameTypeData();
+              $model->setData(read12Sales($year, $category));
+              $model->setType("bar");
+              $model->setName(readCateName($category));
+              $models[$category -1] = $model;
+            }
+            $model = new \NameTypeData();
+            $model->setData(read12Temperatures($year));
+            $model->setType("line");
+            $model->setName("平均气温");
+            $model->setYAxisIndex(1);
+            $models[9] = $model;
+            echo $jsoncallback . "(" . json_encode($models) . ")";
             break;
         case 'temperature':
             //return read12Temperatures($year);
