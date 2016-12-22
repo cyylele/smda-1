@@ -19,7 +19,7 @@ include_once('utils/CateUtils.php');
 include_once('utils/FileUtils.php');
 class CateRankController extends Controller
 {
-    public function actionDo($type='',$city='上海')
+    public function actionDo($type='',$city='sh')
     {
 
         function getalphnum($char){
@@ -37,13 +37,13 @@ class CateRankController extends Controller
         $lastColumn = $currentSheet->getHighestColumn();//取得最大的列
         $models=array();
         $allcolumn= getalphnum( $lastColumn);
-        echo $currentRow;
+      //  echo $currentRow; 不能写这一句，否则前段获取不到数据
         for($currentColumn = 0 ;$currentColumn < $allcolumn; $currentColumn++)
         {
-            //echo "test";
+
             $model = new \CateRank();
-            $val1 = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow-1)->getValue();
-            $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();
+            $val1 = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow+1)->getValue();
+            $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow+2)->getValue();
             $model->setCategory($val1);
             $model->sale_amount($val);
             $models[$currentColumn] = $model;
