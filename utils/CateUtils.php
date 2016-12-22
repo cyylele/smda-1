@@ -53,8 +53,6 @@ class CateUtils
             case '南宁';return 54;
             case '广州';return 56;
             case '海口';return 58;
-
-
         }
     }
 

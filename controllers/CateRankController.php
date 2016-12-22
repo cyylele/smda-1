@@ -19,7 +19,7 @@ include_once('utils/CateUtils.php');
 include_once('utils/FileUtils.php');
 class CateRankController extends Controller
 {
-    public function actionDo($type='',$city='sh')
+    public function actionDo($type='',$city='上海')
     {
 
         function getalphnum($char){
@@ -38,14 +38,16 @@ class CateRankController extends Controller
         $models=array();
         $allcolumn= getalphnum( $lastColumn);
       //  echo $currentRow; 不能写这一句，否则前段获取不到数据
-        for($currentColumn = 0 ;$currentColumn < $allcolumn; $currentColumn++)
+        for($currentColumn = 0 ;$currentColumn < $allcolumn-1; $currentColumn++)
         {
 
             $model = new \CateRank();
             $val1 = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow+1)->getValue();
             $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow+2)->getValue();
+            $valw=$currentSheet->getCellByColumnAndRow($allcolumn-1,$currentRow+1)->getValue();
             $model->setCategory($val1);
             $model->sale_amount($val);
+            $model->setWeather($valw);
             $models[$currentColumn] = $model;
         }
 
